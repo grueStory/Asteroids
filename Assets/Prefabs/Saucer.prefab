@@ -174,7 +174,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ebb60cb991c745e2b36fb142ff9bc6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destroyedParticles: {fileID: 5124558893324894784, guid: a11cdea540bfb498d8a344a230167ceb, type: 3}
-  hitPoints: 3
-  gameManager: {fileID: 0}
-  pursuitSpeed: 2
+  _destroyedParticles: {fileID: 5124558893324894784, guid: a11cdea540bfb498d8a344a230167ceb, type: 3}
+  _hitPoints: 3
+  _speed: 2

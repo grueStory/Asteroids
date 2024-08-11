@@ -1,54 +1,49 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-public class Asteroid : MonoBehaviour
+public class Asteroid : MonoBehaviour, IEnemy
 {
-    [SerializeField] private ParticleSystem destroyedParticles;
+    public event Action<IEnemy> Destroyed;
     
-    public int size = 3;
-
-    public GameManager gameManager;
+    [SerializeField] private ParticleSystem _destroyedParticles;
+    [SerializeField] private int _size = 3;
 
     private void Start()
     {
-        transform.localScale = 0.5f * size * Vector3.one;
-
+        transform.localScale = 0.5f * _size * Vector3.one;
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
-        Vector2 direction = new Vector2(Random.value, Random.value).normalized;
-        float spawnSpeed = Random.Range(4f - size, 5f - size);
+        Vector2 direction = (new Vector2(Random.value - 0.5f , Random.value - 0.5f) * 2f).normalized;
+        float spawnSpeed = Random.Range(4f - _size, 5f - _size);
         rb.AddForce(direction * spawnSpeed, ForceMode2D.Impulse);
-
-        gameManager.asteroidCount++;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Bullet"))
+        if (collision.TryGetComponent(out Bullet bullet))
         {
-            gameManager.asteroidCount--;
-            Destroy(collision.gameObject);
+            bullet.Destroy();
 
-            if (size > 1)
+            if (_size > 1)
             {
                 for (int i = 0; i < 2; i++)
                 {
                     Asteroid newAsteroid = Instantiate(this, transform.position, Quaternion.identity);
-                    newAsteroid.size = size - 1;
-                    newAsteroid.gameManager = gameManager;
+                    newAsteroid._size = _size - 1;
+                    //newAsteroid._asteroidFactory = _asteroidFactory;
                 }
             }
 
-            Instantiate(destroyedParticles, transform.position, Quaternion.identity);
-            gameManager.destroyedAsteroids++;
+            Instantiate(_destroyedParticles, transform.position, Quaternion.identity);
+            Destroyed?.Invoke(this);
             Destroy(gameObject);
         }
-        
-        if (collision.CompareTag("Laser"))
-        {
-            gameManager.asteroidCount--;
-            Destroy(collision.gameObject);
 
-            Instantiate(destroyedParticles, transform.position, Quaternion.identity);
-            gameManager.destroyedAsteroids++;
+        if (collision.TryGetComponent(out Laser laser))
+        {
+            Destroy(collision.gameObject);
+            Instantiate(_destroyedParticles, transform.position, Quaternion.identity);
+            Destroyed?.Invoke(this);
             Destroy(gameObject);
         }
     }

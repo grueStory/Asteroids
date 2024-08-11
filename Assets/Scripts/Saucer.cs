@@ -1,54 +1,49 @@
+using System;
 using UnityEngine;
 
-public class Saucer : MonoBehaviour
-{ 
-    [SerializeField] private ParticleSystem destroyedParticles;
+public class Saucer : MonoBehaviour, IEnemy
+{
+    public event Action<IEnemy> Destroyed;
     
-    public int hitPoints = 3;
-
-    public GameManager gameManager;
-
-    [SerializeField] private float pursuitSpeed = 2f;
-
-    private Rigidbody2D rb;
+    [SerializeField] private ParticleSystem _destroyedParticles;
+    [SerializeField] private int _hitPoints = 3;
+    [SerializeField] private float _speed = 2f;
+    [SerializeField] private Transform _target;
     
+    private Rigidbody2D _rb;
+
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        
-        gameManager.saucerCount++;
+        _rb = GetComponent<Rigidbody2D>();
     }
 
     private void Update()
     {
-        Transform enemy = GameObject.FindGameObjectWithTag("Player").transform; 
-        Vector2 direction = (enemy.position - transform.position).normalized; 
-        rb.velocity = direction * pursuitSpeed;
+        Vector2 direction = (_target.position - transform.position).normalized;
+        _rb.velocity = direction * _speed;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Bullet"))
+        if (collision.TryGetComponent(out Bullet bullet))
         {
-            hitPoints--;
+            _hitPoints--;
             Destroy(collision.gameObject);
 
-            if (hitPoints <= 0)
+            if (_hitPoints <= 0)
             {
-                gameManager.saucerCount--;
-                Instantiate(destroyedParticles, transform.position, Quaternion.identity);
-                gameManager.destroyedSaucers++;
+                Instantiate(_destroyedParticles, transform.position, Quaternion.identity);
+                Destroyed?.Invoke(this);
                 Destroy(gameObject);
             }
         }
-        
-        if (collision.CompareTag("Laser"))
+
+        if (collision.TryGetComponent(out Laser laser))
         {
             Destroy(collision.gameObject);
+            Instantiate(_destroyedParticles, transform.position, Quaternion.identity);
+            Destroyed?.Invoke(this);
             
-            gameManager.saucerCount--;
-            Instantiate(destroyedParticles, transform.position, Quaternion.identity);
-            gameManager.destroyedSaucers++;
             Destroy(gameObject);
         }
     }

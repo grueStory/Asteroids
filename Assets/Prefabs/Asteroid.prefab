@@ -184,6 +184,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9137679a5291449afacb32cd0cf070c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destroyedParticles: {fileID: 5124558893324894784, guid: a11cdea540bfb498d8a344a230167ceb, type: 3}
-  size: 3
-  gameManager: {fileID: 0}
+  _destroyedParticles: {fileID: 5124558893324894784, guid: a11cdea540bfb498d8a344a230167ceb, type: 3}
+  _size: 3
