@@ -8,4 +8,9 @@ public class Bullet : MonoBehaviour
     {
         Destroy(gameObject, bulletLifetime);
     }
+
+    public void Destroy()
+    {
+        Destroy(gameObject);
+    }
 }

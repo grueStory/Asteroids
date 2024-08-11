@@ -1,12 +1,24 @@
-using UnityEngine;
-using UnityEngine.UI;
+using System;
 
-public class Score : MonoBehaviour
+public class Score
 {
-    public Text score;
+    public event Action Updated;
+    
+    public int Value { get; private set; }
 
-    public Score(int destroyedAsteroids, int destroyedSaucers)
+    public void AddAsteroidScore()
     {
-        score.text = "Score: " + (destroyedAsteroids * 10) + (destroyedSaucers * 20);
+        AddScore(10);
+    }
+    
+    public void AddSaucerScore()
+    {
+        AddScore(20);
+    }
+
+    private void AddScore(int value)
+    {
+        Value += value;
+        Updated?.Invoke();
     }
 }

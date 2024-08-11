@@ -1,24 +1,25 @@
+using System;
 using UnityEngine;
 
-public class Saucer : MonoBehaviour
+public class Saucer : MonoBehaviour, IEnemy
 {
+    public event Action<IEnemy> Destroyed;
+    
     [SerializeField] private ParticleSystem _destroyedParticles;
     [SerializeField] private int _hitPoints = 3;
     [SerializeField] private float _speed = 2f;
-
-    private SaucerFactory _saucerFactory;
+    [SerializeField] private Transform _target;
+    
     private Rigidbody2D _rb;
 
     private void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
-        _saucerFactory.saucerCount++;
     }
 
     private void Update()
     {
-        Transform enemy = GameObject.FindGameObjectWithTag("Player").transform;
-        Vector2 direction = (enemy.position - transform.position).normalized;
+        Vector2 direction = (_target.position - transform.position).normalized;
         _rb.velocity = direction * _speed;
     }
 
@@ -31,9 +32,8 @@ public class Saucer : MonoBehaviour
 
             if (_hitPoints <= 0)
             {
-                _saucerFactory.saucerCount--;
                 Instantiate(_destroyedParticles, transform.position, Quaternion.identity);
-                _saucerFactory.destroyedSaucers++;
+                Destroyed?.Invoke(this);
                 Destroy(gameObject);
             }
         }
@@ -41,9 +41,9 @@ public class Saucer : MonoBehaviour
         if (collision.TryGetComponent(out Laser laser))
         {
             Destroy(collision.gameObject);
-            _saucerFactory.saucerCount--;
             Instantiate(_destroyedParticles, transform.position, Quaternion.identity);
-            _saucerFactory.destroyedSaucers++;
+            Destroyed?.Invoke(this);
+            
             Destroy(gameObject);
         }
     }

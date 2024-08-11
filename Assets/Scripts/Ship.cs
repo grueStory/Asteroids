@@ -7,7 +7,7 @@ public class Ship : MonoBehaviour
     [Header("Movement Settings")]
     [SerializeField] private float shipAcceleration = 10f;
     [SerializeField] private float shipMaxVelocity = 10f;
-    [SerializeField] private float shipRotationSpeed = 180f;
+    [SerializeField] public float shipRotationSpeed = 180f;
     
     [Header("Weapon Settings")]
     [SerializeField] private Transform bulletSpawn;
@@ -46,7 +46,11 @@ public class Ship : MonoBehaviour
     {
         if (isAlive)
         {
-            _shipUI.UpdateUI();
+            float shipSpeed = _shipRigidbody.velocity.magnitude;
+            Vector3 shipPosition = transform.position;
+            float shipRotation = transform.eulerAngles.z;
+            
+            _shipUI.Construct(shipSpeed, shipPosition, shipRotation, laserChargeCurent);
 
             if (laserChargeCurent == 0)
             {
@@ -118,32 +122,5 @@ public class Ship : MonoBehaviour
             OnDied?.Invoke();
             Destroy(gameObject);
         }
-    }
-}
-
-public class GameOverController : IDisposable
-{
-    private readonly Ship _ship;
-    private readonly GameOverUI _gameOverUI;
-
-    public GameOverController(Ship ship, GameOverUI gameOverUI)
-    {
-        this._ship = ship;
-        this._gameOverUI = gameOverUI;
-    }
-
-    public void Initialize()
-    {
-        _ship.OnDied += GameOver;
-    }
-
-    private void GameOver()
-    {
-        _gameOverUI.GameOver();
-    }
-
-    public void Dispose()
-    {
-        _ship.OnDied -= GameOver;
     }
 }

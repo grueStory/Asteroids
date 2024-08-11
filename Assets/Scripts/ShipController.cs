@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class ShipController : MonoBehaviour
 {
-    private readonly Ship _ship;
-    private readonly GameInput _gameInput;
+    private Ship _ship;
+    private GameInput _gameInput;
 
-    public PlayerController(Ship ship, GameInput gameInput)
+    public void Construct(Ship ship, GameInput gameInput)
     {
         _ship = ship;
         _gameInput = gameInput;

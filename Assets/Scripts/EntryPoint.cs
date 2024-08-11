@@ -2,15 +2,17 @@ using UnityEngine;
 
 public class EntryPoint : MonoBehaviour
 {
+    [SerializeField] private Ship _ship;
+    [SerializeField] private AsteroidFactory _asteroidFactory;
+    [SerializeField] private SaucerFactory _saucerFactory;
+    [SerializeField] private ShipController _shipController;
+    [SerializeField] private ScoreUI _scoreUI;
+    
     private void Start()
     {
-        Ship ship = new Ship();
-        GameInput gameInput = new GameInput();
-        new PlayerController(ship, gameInput);
-        AsteroidFactory asteroidFactory = new AsteroidFactory();
-        SaucerFactory saucerFactory = new SaucerFactory();
-        Score score = new Score(asteroidFactory.destroyedAsteroids, saucerFactory.destroyedSaucers);
-        new GameOverUI();
-        new ShipUI();
+        Score score = new();
+        GameInput gameInput = new();
+        _shipController.Construct(_ship, gameInput);
+        _scoreUI.Construct(score);
     }
 }

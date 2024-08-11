@@ -9,7 +9,7 @@ public class ShipUI : MonoBehaviour
     [SerializeField] private Text laserChargeText;
     [SerializeField] private Text laserCooldownText;
 
-    public ShipUI(float speed, Vector3 position, float rotation, int laserCharge)
+    public void Construct(float speed, Vector3 position, float rotation, int laserCharge)
     {
         speedText.text = "Speed: " + speed.ToString("F2");
         positionText.text = "Position: (" + position.x.ToString("F2") + ", " + position.y.ToString("F2") + ")";
